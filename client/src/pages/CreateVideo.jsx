@@ -196,6 +196,8 @@ export default function CreateVideo() {
         animationStyle: t.category.toLowerCase() === 'travel' ? 'artistic' : t.category.toLowerCase() === 'gaming' ? 'gaming' : 'cinematic'
       }))
       toast.success(`Loaded template: ${t.name}!`)
+    } else if (location.state?.prompt) {
+      setPrompt(location.state.prompt)
     }
   }, [location.state])
 

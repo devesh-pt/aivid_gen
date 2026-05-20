@@ -231,7 +231,15 @@ export default function Dashboard() {
                   onClick={() => video.status === 'completed' && navigate(`/editor/${video._id}`)}
                   style={{ position: 'relative', aspectRatio: '16/9', background: '#12121f', overflow: 'hidden', cursor: video.status === 'completed' ? 'pointer' : 'default' }}
                 >
-                  <img src={video.thumbnail} alt={video.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img 
+                    src={video.thumbnail} 
+                    alt={video.title} 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `https://picsum.photos/seed/vid_${video._id}/640/360`;
+                    }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
                   <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} />
 
                   {/* Status badge */}
@@ -354,7 +362,15 @@ export default function Dashboard() {
                 onClick={() => navigate('/templates')}
                 style={{ borderRadius: '0.875rem', overflow: 'hidden', cursor: 'pointer', position: 'relative', border: '1px solid rgba(255,255,255,0.07)' }}
               >
-                <img src={t.img} alt={t.name} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} />
+                <img 
+                  src={t.img} 
+                  alt={t.name} 
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = `https://picsum.photos/seed/temp_${i}/640/360`;
+                  }}
+                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} 
+                />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)' }} />
                 <div style={{ position: 'absolute', bottom: 10, left: 10, right: 10 }}>
                   <div style={{ fontSize: '0.75rem', fontWeight: 600 }}>{t.name}</div>

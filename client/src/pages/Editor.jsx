@@ -48,7 +48,15 @@ function SceneCard({ scene, isActive, onSelect, onDelete, onRegenerate, index })
       }}
     >
       <div style={{ position: 'relative', aspectRatio: '16/9' }}>
-        <img src={scene.imageUrl} alt={scene.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img 
+          src={scene.imageUrl} 
+          alt={scene.title} 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = `https://picsum.photos/seed/scene_${index}_fallback/640/360`;
+          }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+        />
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} />
         <div style={{ position: 'absolute', top: 6, left: 6 }}>
           <span style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', padding: '2px 8px', borderRadius: '999px', fontSize: '0.65rem', color: '#f0f0f5', fontWeight: 600 }}>
@@ -103,6 +111,25 @@ export default function Editor() {
   const [scriptText, setScriptText] = useState(activeScene?.script || '')
   const [copied, setCopied] = useState('')
   const [trimValues, setTrimValues] = useState({ start: 0, end: activeScene?.duration || 15 })
+
+  const handleTranslate = async (langCode, langName) => {
+    if (!activeScene) return;
+    toast.loading(`Translating scene script to ${langName}...`, { id: 'translate' });
+    try {
+      const textToTranslate = activeScene.script || '';
+      const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textToTranslate)}&langpair=en|${langCode}`);
+      const data = await response.json();
+      const translated = data.responseData?.translatedText || textToTranslate;
+      
+      const updated = { ...activeScene, script: translated };
+      setActiveScene(updated);
+      setScenes(prev => prev.map(s => s.index === activeScene.index ? updated : s));
+      setScriptText(translated);
+      toast.success(`Translated to ${langName}! 🌐`, { id: 'translate' });
+    } catch (err) {
+      toast.error('Translation failed. Please try again.', { id: 'translate' });
+    }
+  };
 
   // Interactive Timeline States
   const [currentTime, setCurrentTime] = useState(0)
@@ -763,7 +790,15 @@ export default function Editor() {
                           boxShadow: activeScene?.index === scene.index ? 'inset 0 0 10px rgba(124,58,237,0.3)' : 'none'
                         }}
                       >
-                        <img src={scene.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} />
+                        <img 
+                          src={scene.imageUrl} 
+                          alt="" 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://picsum.photos/seed/scene_${i}_fallback/640/360`;
+                          }}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} 
+                        />
                         <div style={{ position: 'absolute', inset: 0, padding: '4px 6px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <span style={{ fontSize: '0.65rem', fontWeight: 700, color: activeScene?.index === scene.index ? '#c4b5fd' : '#d0d0df' }}>
@@ -1485,25 +1520,17 @@ export default function Editor() {
                       <p style={{ fontSize: '0.7rem', color: '#8b8b9e' }}>Translate active scene script to other languages.</p>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.375rem' }}>
                         {[
-                          { lang: 'Spanish', text: 'Bienvenido a este viaje inmersivo sobre este tema...' },
-                          { lang: 'French', text: 'Bienvenue dans ce voyage immersif sur ce sujet...' },
-                          { lang: 'Japanese', text: 'このトピックに関する没入型の旅へようこそ...' },
-                          { lang: 'German', text: 'Willkommen auf dieser immersiven Reise zu diesem Thema...' },
-                          { lang: 'Hindi', text: 'इस विषय के बारे में इस गहन यात्रा में आपका स्वागत है...' },
-                          { lang: 'Italian', text: 'Benvenuti in questo viaggio immersivo su questo argomento...' }
+                          { lang: 'Spanish', code: 'es' },
+                          { lang: 'French', code: 'fr' },
+                          { lang: 'Japanese', code: 'ja' },
+                          { lang: 'German', code: 'de' },
+                          { lang: 'Hindi', code: 'hi' },
+                          { lang: 'Italian', code: 'it' }
                         ].map((trans) => (
                           <button
                             key={trans.lang}
                             className="tag-chip"
-                            onClick={() => {
-                              toast.loading(`Translating to ${trans.lang}...`, { id: 'translate' });
-                              setTimeout(() => {
-                                const updated = { ...activeScene, script: `${trans.text} (${activeScene.script.substring(0, 30)}...)` };
-                                setActiveScene(updated);
-                                setScenes(prev => prev.map(s => s.index === activeScene.index ? updated : s));
-                                toast.success(`Translated to ${trans.lang}! 🌐`, { id: 'translate' });
-                              }, 900);
-                            }}
+                            onClick={() => handleTranslate(trans.code, trans.lang)}
                             style={{ fontSize: '0.65rem', padding: '0.25rem', textAlign: 'center' }}
                           >
                             {trans.lang}
