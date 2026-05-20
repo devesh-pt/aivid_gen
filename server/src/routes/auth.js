@@ -2,8 +2,12 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
+const mongoose = require('mongoose');
+
 let User;
 try { User = require('../models/User'); } catch {}
+
+const useDb = () => User && mongoose.connection.readyState === 1;
 
 const generateToken = (userId) => jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
@@ -16,7 +20,7 @@ router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) return res.status(400).json({ message: 'All fields required' });
-    if (User) {
+    if (useDb()) {
       const exists = await User.findOne({ email });
       if (exists) return res.status(400).json({ message: 'Email already registered' });
       const user = await User.create({ name, email, password });
@@ -35,7 +39,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (User) {
+    if (useDb()) {
       const user = await User.findOne({ email });
       if (!user || !(await user.comparePassword(password)))
         return res.status(401).json({ message: 'Invalid credentials' });
@@ -58,7 +62,7 @@ router.get('/me', async (req, res) => {
   if (!token) return res.status(401).json({ message: 'No token' });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (User) {
+    if (useDb()) {
       const user = await User.findById(decoded.userId).select('-password');
       res.json(user);
     } else {

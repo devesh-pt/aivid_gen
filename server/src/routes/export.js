@@ -2,8 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { inMemoryVideos } = require('./videos');
 
+const mongoose = require('mongoose');
+
 let Video;
 try { Video = require('../models/Video'); } catch {}
+
+const useDb = () => Video && mongoose.connection.readyState === 1;
 
 router.post('/:id', async (req, res) => {
   try {
@@ -16,7 +20,7 @@ router.post('/:id', async (req, res) => {
     const downloadUrl = `https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4`;
     const fileSize = quality === '4K' ? 485.2 : quality === '1080p' ? 142.7 : 48.3;
     
-    if (Video) {
+    if (useDb()) {
       await Video.findByIdAndUpdate(id, { downloadUrl, fileSize, status: 'exported' });
     } else {
       const v = inMemoryVideos.find(v => v._id === id);

@@ -3,8 +3,12 @@ const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 const { runPipeline } = require('../services/aiPipeline');
 
+const mongoose = require('mongoose');
+
 let Video;
 try { Video = require('../models/Video'); } catch {}
+
+const useDb = () => Video && mongoose.connection.readyState === 1;
 
 const { inMemoryVideos } = require('./videos');
 
@@ -36,7 +40,7 @@ router.post('/start', async (req, res) => {
       createdAt: new Date()
     };
     
-    if (Video) {
+    if (useDb()) {
       const dbVideo = await Video.create({ ...videoData, userId: null });
       videoData._id = dbVideo._id.toString();
     } else {
@@ -59,7 +63,7 @@ router.post('/start', async (req, res) => {
 
 router.get('/status/:videoId', (req, res) => {
   const { videoId } = req.params;
-  if (Video) {
+  if (useDb()) {
     Video.findById(videoId)
       .then(v => res.json(v || { status: 'not_found' }))
       .catch(() => res.json({ status: 'error' }));
