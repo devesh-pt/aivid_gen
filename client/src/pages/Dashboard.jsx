@@ -53,7 +53,7 @@ function Sidebar({ navigate, logout }) {
           <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'linear-gradient(135deg, #7c3aed, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Sparkles size={15} color="white" />
           </div>
-          <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, fontSize: '1rem' }}>VisionFlow <span className="gradient-text">AI</span></span>
+          <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, fontSize: '1rem' }}>aivid_gen</span>
         </div>
       </div>
 

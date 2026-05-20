@@ -82,7 +82,7 @@ export default function LandingPage() {
             <Sparkles size={18} color="white" />
           </div>
           <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, fontSize: '1.15rem', letterSpacing: '-0.02em' }}>
-            VisionFlow <span className="gradient-text">AI</span>
+            aivid_gen
           </span>
         </div>
 
@@ -121,7 +121,7 @@ export default function LandingPage() {
             fontSize: '1.2rem', color: '#8b8b9e', lineHeight: 1.7,
             maxWidth: 620, margin: '0 auto 2.5rem'
           }}>
-            Type a prompt. Choose your settings. VisionFlow AI handles everything —
+            Type a prompt. Choose your settings. aivid_gen handles everything —
             script, visuals, voiceover, music, subtitles — delivering broadcast-quality
             videos for YouTube, Shorts, Reels, and more.
           </motion.p>
@@ -153,7 +153,7 @@ export default function LandingPage() {
           }}>
             <img
               src="https://picsum.photos/seed/hero/1200/675"
-              alt="VisionFlow AI Demo"
+              alt="aivid_gen Demo"
               style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5 }}
             />
             <div style={{
@@ -235,7 +235,7 @@ export default function LandingPage() {
             Everything You Need to Go Viral
           </motion.h2>
           <motion.p variants={fadeUp} style={{ color: '#8b8b9e', fontSize: '1.1rem', maxWidth: 560, margin: '0 auto' }}>
-            VisionFlow AI automates every step of professional video production in one seamless pipeline.
+            aivid_gen automates every step of professional video production in one seamless pipeline.
           </motion.p>
         </motion.div>
 
@@ -416,9 +416,9 @@ export default function LandingPage() {
           }}>
             <Sparkles size={12} color="white" />
           </div>
-          <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, color: '#8b8b9e' }}>VisionFlow AI</span>
+          <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, color: '#8b8b9e' }}>aivid_gen</span>
         </div>
-        <p>© 2025 VisionFlow AI. All rights reserved. Built with ❤️ and artificial intelligence.</p>
+        <p>© 2025 aivid_gen. All rights reserved. Built with ❤️ and artificial intelligence.</p>
       </footer>
     </div>
   )

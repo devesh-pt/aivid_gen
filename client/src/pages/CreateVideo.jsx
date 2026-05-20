@@ -848,7 +848,7 @@ export default function CreateVideo() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem' }}>
                     <div>
                       <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Remove watermark</span>
-                      <p style={{ fontSize: '0.75rem', color: '#52526a', marginTop: 2 }}>Toggle off to include VisionFlow branding</p>
+                      <p style={{ fontSize: '0.75rem', color: '#52526a', marginTop: 2 }}>Toggle off to include aivid_gen branding</p>
                     </div>
                     <label className="toggle">
                       <input

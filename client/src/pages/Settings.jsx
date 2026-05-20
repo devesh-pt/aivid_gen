@@ -31,7 +31,7 @@ function Sidebar({ navigate, logout }) {
           <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'linear-gradient(135deg, #7c3aed, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Sparkles size={15} color="white" />
           </div>
-          <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, fontSize: '1rem' }}>VisionFlow <span className="gradient-text">AI</span></span>
+          <span style={{ fontFamily: 'Space Grotesk', fontWeight: 700, fontSize: '1rem' }}>aivid_gen</span>
         </div>
       </div>
 
@@ -516,7 +516,7 @@ export default function SettingsPage() {
                     <div style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       <div>
                         <div style={{ fontSize: '0.8rem', fontWeight: 600 }}>{user?.name || 'Devesh Patel'}</div>
-                        <div style={{ fontSize: '0.65rem', color: '#52526a' }}>{user?.email || 'admin@visionflow.ai'}</div>
+                        <div style={{ fontSize: '0.65rem', color: '#52526a' }}>{user?.email || 'admin@aivid-gen.ai'}</div>
                       </div>
                       <select 
                         className="input" 
@@ -534,7 +534,7 @@ export default function SettingsPage() {
                     <div style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div>
                         <div style={{ fontSize: '0.8rem', fontWeight: 600 }}>Demo User Account</div>
-                        <div style={{ fontSize: '0.65rem', color: '#52526a' }}>demo@visionflow.ai</div>
+                        <div style={{ fontSize: '0.65rem', color: '#52526a' }}>demo@aivid-gen.ai</div>
                       </div>
                       <select 
                         className="input" 

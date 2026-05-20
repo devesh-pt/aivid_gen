@@ -110,7 +110,7 @@ export default function Editor() {
   // NDI Local Streaming States
   const [exportTab, setExportTab] = useState('mp4') // mp4 | Ndi
   const [ndiActive, setNdiActive] = useState(false)
-  const [ndiStreamName, setNdiStreamName] = useState(video?.title ? video.title.replace(/[^a-zA-Z0-9]/g, '_') + '_NDI' : 'VisionFlow_NDI_Output')
+  const [ndiStreamName, setNdiStreamName] = useState(video?.title ? video.title.replace(/[^a-zA-Z0-9]/g, '_') + '_NDI' : 'aivid_gen_NDI_Output')
   const [ndiResolution, setNdiResolution] = useState('1080p 60fps')
   const [ndiFormat, setNdiFormat] = useState('NDI High Bandwidth')
   const [ndiAudio, setNdiAudio] = useState('LPCM 24-bit')

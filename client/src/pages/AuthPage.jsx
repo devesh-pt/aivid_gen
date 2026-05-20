@@ -38,7 +38,7 @@ export default function AuthPage() {
 
   const handleDemo = () => {
     login({
-      _id: 'demo', name: 'Demo User', email: 'demo@visionflow.ai', plan: 'pro', videosGenerated: 12
+      _id: 'demo', name: 'Demo User', email: 'demo@aivid-gen.ai', plan: 'pro', videosGenerated: 12
     }, 'demo-token')
     toast.success('Logged in as Demo User!')
     navigate('/dashboard')
@@ -66,7 +66,7 @@ export default function AuthPage() {
             {mode === 'login' ? 'Welcome back' : 'Create account'}
           </h1>
           <p style={{ color: '#8b8b9e', fontSize: '0.875rem' }}>
-            {mode === 'login' ? 'Sign in to your VisionFlow AI account' : 'Start creating AI videos for free'}
+            {mode === 'login' ? 'Sign in to your aivid_gen account' : 'Start creating AI videos for free'}
           </p>
         </div>
 

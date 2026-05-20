@@ -52,7 +52,7 @@ const PORT = process.env.PORT || 5001;
 
 function startServer() {
   server.listen(PORT, () => {
-    console.log(`✅ VisionFlow AI server running on http://localhost:${PORT}`);
+    console.log(`✅ aivid_gen server running on http://localhost:${PORT}`);
   });
 
   server.on('error', (err) => {

@@ -12,6 +12,6 @@ export const useAuthStore = create(
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
       updateUser: (data) => set({ user: { ...get().user, ...data } }),
     }),
-    { name: 'visionflow-auth' }
+    { name: 'aivid_gen-auth' }
   )
 )

@@ -9,7 +9,7 @@ const generateToken = (userId) => jwt.sign({ userId }, process.env.JWT_SECRET, {
 
 // Demo users (in-memory fallback when no MongoDB)
 const demoUsers = [
-  { _id: 'demo123', name: 'Demo User', email: 'demo@visionflow.ai', password: 'demo1234', plan: 'pro', videosGenerated: 12, storageUsed: 2.4 }
+  { _id: 'demo123', name: 'Demo User', email: 'demo@aivid-gen.ai', password: 'demo1234', plan: 'pro', videosGenerated: 12, storageUsed: 2.4 }
 ];
 
 router.post('/register', async (req, res) => {
@@ -62,7 +62,7 @@ router.get('/me', async (req, res) => {
       const user = await User.findById(decoded.userId).select('-password');
       res.json(user);
     } else {
-      res.json({ _id: decoded.userId, name: 'Demo User', email: 'demo@visionflow.ai', plan: 'pro', videosGenerated: 12 });
+      res.json({ _id: decoded.userId, name: 'Demo User', email: 'demo@aivid-gen.ai', plan: 'pro', videosGenerated: 12 });
     }
   } catch {
     res.status(401).json({ message: 'Invalid token' });

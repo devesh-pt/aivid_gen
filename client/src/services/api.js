@@ -5,7 +5,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 const api = axios.create({ baseURL: BASE_URL })
 
 api.interceptors.request.use((config) => {
-  const stored = localStorage.getItem('visionflow-auth')
+  const stored = localStorage.getItem('aivid_gen-auth')
   if (stored) {
     const { state } = JSON.parse(stored)
     if (state?.token) config.headers.Authorization = `Bearer ${state.token}`
