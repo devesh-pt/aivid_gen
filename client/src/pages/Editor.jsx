@@ -293,31 +293,74 @@ export default function Editor() {
 
   // Sync play/pause state to video, audio, and custom voice nodes
   useEffect(() => {
-    if (!videoRef.current) return
-    if (isPlaying) {
-      videoRef.current.play().catch(err => console.log('Playback error:', err))
-      if (audioRef.current) {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play().catch(err => console.log('Playback error:', err))
+      } else {
+        videoRef.current.pause()
+      }
+    }
+    
+    // Play/Pause background music
+    if (audioRef.current) {
+      if (isPlaying) {
         audioRef.current.play().catch(err => console.log('Audio playback error:', err))
-      }
-      if (activeScene?.voiceUrl && voiceAudioRef.current) {
-        voiceAudioRef.current.play().catch(err => console.log('Voice playback error:', err))
-      }
-      if (video?.settings?.voiceoverUrl && masterVoiceAudioRef.current) {
-        masterVoiceAudioRef.current.play().catch(err => console.log('Master voice playback error:', err))
-      }
-    } else {
-      videoRef.current.pause()
-      if (audioRef.current) {
+      } else {
         audioRef.current.pause()
       }
-      if (voiceAudioRef.current) {
+    }
+    
+    // Play/Pause voice narration
+    if (activeScene?.voiceUrl && voiceAudioRef.current) {
+      if (isPlaying) {
+        voiceAudioRef.current.play().catch(err => console.log('Voice playback error:', err))
+      } else {
         voiceAudioRef.current.pause()
       }
-      if (masterVoiceAudioRef.current) {
+    }
+    if (video?.settings?.voiceoverUrl && masterVoiceAudioRef.current) {
+      if (isPlaying) {
+        masterVoiceAudioRef.current.play().catch(err => console.log('Master voice playback error:', err))
+      } else {
         masterVoiceAudioRef.current.pause()
       }
     }
   }, [isPlaying, activeScene, video?.settings?.voiceoverUrl])
+
+  // Simulated playback time incrementer when videoUrl is not generated yet
+  useEffect(() => {
+    if (video?.videoUrl) return; // Use native video player events if real video exists
+    
+    let interval;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setCurrentTime((prev) => {
+          const next = prev + 0.25; // increment by 250ms
+          if (next >= totalDuration) {
+            setIsPlaying(false);
+            return 0;
+          }
+          
+          // Find which scene corresponds to this time
+          let accumulatedTime = 0;
+          let currentSceneIndex = 0;
+          for (let i = 0; i < scenes.length; i++) {
+            accumulatedTime += (scenes[i]?.duration || 0);
+            if (next <= accumulatedTime) {
+              currentSceneIndex = i;
+              break;
+            }
+          }
+          if (scenes[currentSceneIndex] && activeScene?.index !== scenes[currentSceneIndex].index) {
+            setActiveScene(scenes[currentSceneIndex]);
+          }
+          
+          return next;
+        });
+      }, 250);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, scenes, totalDuration, activeScene, video?.videoUrl])
 
   // Sync custom voice source when scene changes
   useEffect(() => {
@@ -515,9 +558,16 @@ export default function Editor() {
   }
 
   const handleRegenerateScene = (scene) => {
-    const newImg = `https://picsum.photos/seed/${Date.now()}/640/360`
-    setScenes(prev => prev.map(s => s.index === scene.index ? { ...s, imageUrl: newImg } : s))
-    toast.success('Scene regenerated!')
+    const prompt = scene.visualDescription || scene.script || 'cinematic shot';
+    const cleanPrompt = encodeURIComponent(prompt.substring(0, 150) + ", 4k, cinematic, detailed, masterwork");
+    const newImg = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=640&height=360&nologo=true&seed=${Math.floor(Math.random() * 1000000)}`;
+    
+    const updated = { ...scene, imageUrl: newImg };
+    if (activeScene?.index === scene.index) {
+      setActiveScene(updated);
+    }
+    setScenes(prev => prev.map(s => s.index === scene.index ? updated : s));
+    toast.success('Scene visual regenerated based on script! 🎨');
   }
 
   const copyToClipboard = (text, key) => {
@@ -616,14 +666,32 @@ export default function Editor() {
               boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
               background: '#000', position: 'relative', aspectRatio: video?.settings?.aspectRatio === '9:16' ? '9/16' : video?.settings?.aspectRatio === '1:1' ? '1/1' : '16/9'
             }}>
-              <video
-                ref={videoRef}
-                src={video?.videoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'}
-                poster={activeScene?.imageUrl}
-                onTimeUpdate={handleTimeUpdate}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                playsInline
-              />
+              {video?.videoUrl ? (
+                <video
+                  ref={videoRef}
+                  src={video.videoUrl}
+                  onTimeUpdate={handleTimeUpdate}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  playsInline
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                  <img
+                    src={activeScene?.imageUrl}
+                    alt=""
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `https://picsum.photos/seed/scene_${activeScene?.index || 0}_fallback/640/360`;
+                    }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 0.3s ease-in-out' }}
+                  />
+                  {isPlaying && (
+                    <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(0,0,0,0.6)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.65rem' }}>
+                      <span className="pulse-dot" style={{ background: '#a855f7', width: 6, height: 6, borderRadius: '50%', display: 'inline-block' }} /> Simulated Preview
+                    </div>
+                  )}
+                </div>
+              )}
               <audio
                 ref={audioRef}
                 src="https://assets.mixkit.co/music/preview/mixkit-serene-view-1364.mp3"
@@ -721,23 +789,33 @@ export default function Editor() {
               <div style={{ width: Math.max(800, totalDuration * 12 + 100), height: '100%', position: 'relative' }}>
                 
                 {/* 1. Ruler Track */}
-                <div 
+                <div
                   onMouseDown={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect()
-                    const clickX = e.clientX - rect.left
-                    const newTime = Math.max(0, Math.min(totalDuration, clickX / 12))
-                    if (videoRef.current) {
-                      videoRef.current.currentTime = newTime
+                    const updatePlayhead = (x) => {
+                      const newTime = Math.max(0, Math.min(totalDuration, x / 12))
                       setCurrentTime(newTime)
+                      if (videoRef.current) {
+                        videoRef.current.currentTime = newTime
+                      }
+                      let accumulatedTime = 0
+                      let currentSceneIndex = 0
+                      for (let i = 0; i < scenes.length; i++) {
+                        accumulatedTime += (scenes[i]?.duration || 0)
+                        if (newTime <= accumulatedTime) {
+                          currentSceneIndex = i
+                          break
+                        }
+                      }
+                      if (scenes[currentSceneIndex] && activeScene?.index !== scenes[currentSceneIndex].index) {
+                        setActiveScene(scenes[currentSceneIndex])
+                      }
                     }
                     
+                    updatePlayhead(e.clientX - rect.left)
+                    
                     const handleMouseMove = (moveEvent) => {
-                      const moveX = moveEvent.clientX - rect.left
-                      const moveTime = Math.max(0, Math.min(totalDuration, moveX / 12))
-                      if (videoRef.current) {
-                        videoRef.current.currentTime = moveTime
-                        setCurrentTime(moveTime)
-                      }
+                      updatePlayhead(moveEvent.clientX - rect.left)
                     }
                     
                     const handleMouseUp = () => {
@@ -958,10 +1036,15 @@ export default function Editor() {
                       value={scriptText}
                       onChange={e => setScriptText(e.target.value)}
                       onBlur={() => {
-                        const updated = { ...activeScene, script: scriptText }
+                        const promptText = scriptText || activeScene.script;
+                        const cleanPrompt = encodeURIComponent(promptText.substring(0, 150) + ", 4k, cinematic, detailed, masterwork");
+                        const newImg = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=640&height=360&nologo=true&seed=${Math.floor(Math.random() * 1000000)}`;
+                        
+                        const updated = { ...activeScene, script: scriptText, visualDescription: scriptText, imageUrl: newImg }
                         setActiveScene(updated)
                         setScenes(prev => prev.map(s => s.index === activeScene.index ? updated : s))
                         setEditingScript(false)
+                        toast.success('Script saved & scene visual recreated! 🎨')
                       }}
                       rows={5}
                       style={{ fontSize: '0.8rem', resize: 'none', lineHeight: 1.6 }}

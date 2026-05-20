@@ -16,7 +16,7 @@ const PIPELINE_STAGES = [
 function generateScript(prompt, settings) {
   const durationMap = { '30sec': 30, '1min': 60, '5min': 300, '10min': 600 };
   const secs = durationMap[settings.duration] || 60;
-  const sceneCountMap = { '30sec': 5, '1min': 10, '5min': 15, '10min': 20 };
+  const sceneCountMap = { '30sec': 10, '1min': 10, '5min': 15, '10min': 20 };
   const sceneCount = sceneCountMap[settings.duration] || 10;
   
   const hooks = [
@@ -29,12 +29,13 @@ function generateScript(prompt, settings) {
   return {
     hook: hooks[Math.floor(Math.random() * hooks.length)],
     scenes: Array.from({ length: sceneCount }, (_, i) => {
-      const visualDesc = generateVisualDescription(prompt, i);
+      const sceneScript = generateSceneScript(prompt, i, sceneCount);
+      const visualDesc = generateVisualDescription(sceneScript, i);
       const cleanPrompt = encodeURIComponent(visualDesc + ", 4k, cinematic, detailed, masterwork");
       return {
         index: i,
         title: `Scene ${i + 1}`,
-        script: generateSceneScript(prompt, i, sceneCount),
+        script: sceneScript,
         visualDescription: visualDesc,
         duration: Math.floor(secs / sceneCount),
         imageUrl: `https://image.pollinations.ai/prompt/${cleanPrompt}?width=640&height=360&nologo=true&seed=${Math.floor(Math.random() * 1000000)}`,
