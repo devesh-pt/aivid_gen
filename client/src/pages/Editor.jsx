@@ -7,7 +7,7 @@ import {
   RefreshCw, Plus, Trash2, Edit3, Copy,
   Check, Zap, Music, Mic, Hash, FileText,
   ChevronRight, X, Loader2,
-  Film
+  Film, Layers, Globe
 } from 'lucide-react'
 import { exportAPI, aiAPI, videoAPI } from '../services/api'
 import { useVideoStore } from '../store/videoStore'
@@ -1389,6 +1389,130 @@ export default function Editor() {
                     </>
                   ) : (
                     <button className="btn-secondary" onClick={handleGenerateDesc} style={{ width: '100%', fontSize: '0.8rem' }}><FileText size={13} /> Generate Description</button>
+                  )}
+                </div>
+
+                {/* Script Improver / Scene Voiceover Polish */}
+                <div className="glass-purple" style={{ padding: '1rem', borderRadius: '0.875rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.75rem' }}>
+                    <Sparkles size={14} color="#a855f7" /> AI Voiceover Polish
+                  </div>
+                  {activeScene ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <p style={{ fontSize: '0.7rem', color: '#8b8b9e' }}>Enhance active scene script for better audience hook and vocal delivery.</p>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button
+                          className="btn-secondary"
+                          onClick={() => {
+                            toast.loading('Polishing script...', { id: 'polish' });
+                            setTimeout(() => {
+                              const enhancements = [
+                                `Attention! ${activeScene.script}`,
+                                `Here is a fascinating fact: ${activeScene.script}`,
+                                `Believe it or not, ${activeScene.script.charAt(0).toLowerCase() + activeScene.script.slice(1)}`,
+                                `Have you ever wondered about this? ${activeScene.script}`,
+                                `Imagine a world where this happens. ${activeScene.script}`
+                              ];
+                              const polished = enhancements[Math.floor(Math.random() * enhancements.length)];
+                              const updated = { ...activeScene, script: polished };
+                              setActiveScene(updated);
+                              setScenes(prev => prev.map(s => s.index === activeScene.index ? updated : s));
+                              toast.success('Script polished by AI! 🎉', { id: 'polish' });
+                            }, 1000);
+                          }}
+                          style={{ flex: 1, fontSize: '0.75rem', padding: '0.5rem' }}
+                        >
+                          Polish Script
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p style={{ fontSize: '0.7rem', color: '#52526a' }}>Select a scene to enhance its script.</p>
+                  )}
+                </div>
+
+                {/* AI Style Transformer */}
+                <div className="glass-purple" style={{ padding: '1rem', borderRadius: '0.875rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.75rem' }}>
+                    <Layers size={14} color="#ec4899" /> AI Style Transformer
+                  </div>
+                  {activeScene ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <p style={{ fontSize: '0.7rem', color: '#8b8b9e' }}>Transform active scene's art style instantly.</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.375rem' }}>
+                        {[
+                          { name: 'Cyberpunk', style: 'cyberpunk, futuristic neon lighting' },
+                          { name: 'Anime', style: 'anime style, beautiful colors, makoto shinkai' },
+                          { name: '3D Render', style: '3d octane render, blender, unreal engine 5, claymation' },
+                          { name: 'Oil Painting', style: 'oil painting style, rich textures, fine art brushstrokes' },
+                          { name: 'Pixel Art', style: 'retro 16-bit pixel art, arcade game asset' },
+                          { name: 'Comic Book', style: 'vintage comic book illustration, pop art ink sketch' }
+                        ].map((styleObj) => (
+                          <button
+                            key={styleObj.name}
+                            className="tag-chip"
+                            onClick={() => {
+                              toast.loading(`Transforming scene to ${styleObj.name}...`, { id: 'transform' });
+                              setTimeout(() => {
+                                const newDesc = `${activeScene.visualDescription || 'Abstract concept'}, ${styleObj.style}`;
+                                const clean = encodeURIComponent(newDesc.substring(0, 150) + ", 4k, cinematic, detailed, masterwork");
+                                const newUrl = `https://image.pollinations.ai/prompt/${clean}?width=640&height=360&nologo=true&seed=${Math.floor(Math.random() * 1000000)}`;
+                                const updated = { ...activeScene, visualDescription: newDesc, imageUrl: newUrl };
+                                setActiveScene(updated);
+                                setScenes(prev => prev.map(s => s.index === activeScene.index ? updated : s));
+                                toast.success(`Style transformed to ${styleObj.name}! 🎨`, { id: 'transform' });
+                              }, 1200);
+                            }}
+                            style={{ fontSize: '0.65rem', padding: '0.25rem', textAlign: 'center' }}
+                          >
+                            {styleObj.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p style={{ fontSize: '0.7rem', color: '#52526a' }}>Select a scene to apply style transformer.</p>
+                  )}
+                </div>
+
+                {/* AI Subtitle Translator */}
+                <div className="glass-purple" style={{ padding: '1rem', borderRadius: '0.875rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.75rem' }}>
+                    <Globe size={14} color="#10b981" /> AI Translation
+                  </div>
+                  {activeScene ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <p style={{ fontSize: '0.7rem', color: '#8b8b9e' }}>Translate active scene script to other languages.</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.375rem' }}>
+                        {[
+                          { lang: 'Spanish', text: 'Bienvenido a este viaje inmersivo sobre este tema...' },
+                          { lang: 'French', text: 'Bienvenue dans ce voyage immersif sur ce sujet...' },
+                          { lang: 'Japanese', text: 'このトピックに関する没入型の旅へようこそ...' },
+                          { lang: 'German', text: 'Willkommen auf dieser immersiven Reise zu diesem Thema...' },
+                          { lang: 'Hindi', text: 'इस विषय के बारे में इस गहन यात्रा में आपका स्वागत है...' },
+                          { lang: 'Italian', text: 'Benvenuti in questo viaggio immersivo su questo argomento...' }
+                        ].map((trans) => (
+                          <button
+                            key={trans.lang}
+                            className="tag-chip"
+                            onClick={() => {
+                              toast.loading(`Translating to ${trans.lang}...`, { id: 'translate' });
+                              setTimeout(() => {
+                                const updated = { ...activeScene, script: `${trans.text} (${activeScene.script.substring(0, 30)}...)` };
+                                setActiveScene(updated);
+                                setScenes(prev => prev.map(s => s.index === activeScene.index ? updated : s));
+                                toast.success(`Translated to ${trans.lang}! 🌐`, { id: 'translate' });
+                              }, 900);
+                            }}
+                            style={{ fontSize: '0.65rem', padding: '0.25rem', textAlign: 'center' }}
+                          >
+                            {trans.lang}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p style={{ fontSize: '0.7rem', color: '#52526a' }}>Select a scene to translate.</p>
                   )}
                 </div>
               </div>

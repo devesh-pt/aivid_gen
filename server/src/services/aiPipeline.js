@@ -16,7 +16,8 @@ const PIPELINE_STAGES = [
 function generateScript(prompt, settings) {
   const durationMap = { '30sec': 30, '1min': 60, '5min': 300, '10min': 600 };
   const secs = durationMap[settings.duration] || 60;
-  const sceneCount = Math.max(3, Math.floor(secs / 15));
+  const sceneCountMap = { '30sec': 5, '1min': 10, '5min': 15, '10min': 20 };
+  const sceneCount = sceneCountMap[settings.duration] || 10;
   
   const hooks = [
     `Did you know that ${prompt.substring(0, 40)}...`,
@@ -60,15 +61,16 @@ function generateSceneScript(prompt, index, total) {
 }
 
 function generateVisualDescription(prompt, index) {
+  const cleanPrompt = prompt.length > 150 ? prompt.substring(0, 150) + "..." : prompt;
   const angles = [
-    `Cinematic wide establishing shot of ${prompt}, vibrant studio lighting, realistic details, highly stylized, masterwork`,
-    `High-fidelity close-up shot capturing details of ${prompt}, dynamic focus, dramatic lighting, vivid colors, masterwork`,
-    `Action motion-blur tracking shot showcasing ${prompt}, cinematic atmosphere, dramatic shadows, sharp details, masterwork`,
-    `Symmetrical centered shot showing ${prompt}, colorful volumetric lighting, high contrast, clean details, masterwork`,
-    `Low angle heroic shot focusing on ${prompt}, golden hour lighting, cinematic style, highly detailed, masterwork`,
-    `Wide pan shot portraying ${prompt} in an expansive environment, modern color grade, realistic textures, masterwork`,
-    `High-angle view of ${prompt}, artistic depth of field, detailed scenery, masterwork`,
-    `Dynamic medium shot of ${prompt}, bokeh background, professional cinema lighting, rich contrast, masterwork`
+    `Cinematic wide establishing shot of ${cleanPrompt}, vibrant studio lighting, realistic details, highly stylized, masterwork`,
+    `High-fidelity close-up shot capturing details of ${cleanPrompt}, dynamic focus, dramatic lighting, vivid colors, masterwork`,
+    `Action motion-blur tracking shot showcasing ${cleanPrompt}, cinematic atmosphere, dramatic shadows, sharp details, masterwork`,
+    `Symmetrical centered shot showing ${cleanPrompt}, colorful volumetric lighting, high contrast, clean details, masterwork`,
+    `Low angle heroic shot focusing on ${cleanPrompt}, golden hour lighting, cinematic style, highly detailed, masterwork`,
+    `Wide pan shot portraying ${cleanPrompt} in an expansive environment, modern color grade, realistic textures, masterwork`,
+    `High-angle view of ${cleanPrompt}, artistic depth of field, detailed scenery, masterwork`,
+    `Dynamic medium shot of ${cleanPrompt}, bokeh background, professional cinema lighting, rich contrast, masterwork`
   ];
   return angles[index % angles.length];
 }
