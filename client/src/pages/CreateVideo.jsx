@@ -446,14 +446,15 @@ export default function CreateVideo() {
                   id="prompt-input"
                   value={prompt}
                   onChange={e => setPrompt(e.target.value)}
+                  maxLength={20000}
                   placeholder="E.g. A cinematic documentary about how artificial intelligence is reshaping healthcare in developing countries, featuring real stories, expert interviews, and animated data visualizations..."
                   rows={6}
                   className="input"
                   style={{ resize: 'none', lineHeight: 1.6, paddingBottom: '3.5rem', fontSize: '0.95rem' }}
                 />
                 <div style={{ position: 'absolute', bottom: 12, left: 12, right: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.75rem', color: prompt.length > 500 ? '#ef4444' : '#52526a' }}>
-                    {prompt.length}/1000
+                  <span style={{ fontSize: '0.75rem', color: prompt.length > 18000 ? '#ef4444' : '#52526a' }}>
+                    {prompt.length}/20000
                   </span>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button
